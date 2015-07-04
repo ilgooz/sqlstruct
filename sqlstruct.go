@@ -109,7 +109,7 @@ var finfos map[reflect.Type]fieldInfo
 var finfoLock sync.RWMutex
 
 // tagName is the name of the tag to use on struct fields
-const tagName = "s"
+const tagName = "ss"
 
 // fieldInfo is a mapping of field tag values to their indices
 type fieldInfo map[string][]int
