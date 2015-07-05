@@ -83,7 +83,6 @@ package sqlstruct
 
 import (
 	"bytes"
-	"database/sql"
 	"fmt"
 	"reflect"
 	"sort"
@@ -250,7 +249,7 @@ func doScan(dest interface{}, rows Rows, alias string) error {
 		var v interface{}
 		if !ok {
 			// There is no field mapped to this column so we discard it
-			v = &sql.RawBytes{}
+			v = &v
 		} else {
 			v = elem.FieldByIndex(idx).Addr().Interface()
 		}
