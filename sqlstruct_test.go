@@ -6,23 +6,31 @@ package sqlstruct
 import (
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type EmbeddedType struct {
-	FieldE string `sql:"field_e"`
+	FieldE string `ss:"field_e"`
 }
 
 type testType struct {
-	FieldA  string `sql:"field_a"`
-	FieldB  string `sql:"-"`       // Ignored
-	FieldC  string `sql:"field_C"` // Different letter case
+	FieldA  string `ss:"field_a"`
+	FieldB  string `ss:"-"`       // Ignored
+	FieldC  string `ss:"field_C"` // Different letter case
 	Field_D string // Field name is used
 	EmbeddedType
 }
 
 type testType2 struct {
-	FieldA   string `sql:"field_a"`
-	FieldSec string `sql:"field_sec"`
+	FieldA   string `ss:"field_a"`
+	FieldSec string `ss:"field_sec"`
+}
+type testType3 struct {
+	B *string
+	T time.Time `ss:"field_t"`
+	A string
 }
 
 // testRows is a mock version of sql.Rows which can only scan strings
@@ -140,6 +148,24 @@ func TestScanAliased(t *testing.T) {
 	if expected2 != actual2 {
 		t.Errorf("expected %q got %q", expected2, actual2)
 	}
+}
+
+func TestValues(t *testing.T) {
+	fB := "s1"
+	fT := time.Now()
+	fA := "s2"
+
+	var ifB interface{}
+	var ifT interface{}
+	var ifA interface{}
+
+	ifB = &fB
+	ifT = fT
+	ifA = fA
+
+	x := testType3{A: fA, B: &fB, T: fT}
+
+	assert.Equal(t, []interface{}{ifA, ifB, ifT}, Values(x))
 }
 
 func TestToSnakeCase(t *testing.T) {

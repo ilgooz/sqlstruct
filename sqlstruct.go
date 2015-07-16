@@ -195,6 +195,21 @@ func Columns(s interface{}) string {
 	return strings.Join(cols(s), ", ")
 }
 
+func Values(s interface{}) []interface{} {
+	vals := []interface{}{}
+	v := reflect.ValueOf(s)
+	fields := getFieldInfo(v.Type())
+
+	cs := cols(s)
+	for _, c := range cs {
+		i := fields[c]
+		va := v.FieldByIndex(i)
+		vals = append(vals, va.Interface())
+	}
+
+	return vals
+}
+
 // ColumnsAliased works like Columns except it prefixes the resulting column name with the
 // given alias.
 //
