@@ -88,6 +88,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 )
 
 // NameMapper is used to convert struct fields which do not have sql tags
@@ -204,7 +205,19 @@ func Values(s interface{}) []interface{} {
 	for _, c := range cs {
 		i := fields[c]
 		va := v.FieldByIndex(i)
-		vals = append(vals, va.Interface())
+		var val interface{}
+		if t, ok := va.Interface().(time.Time); ok {
+			val = t.Format("2006-01-02 15:04:05")
+		} else if t, ok := va.Interface().(*time.Time); ok {
+			if t == nil {
+				val = nil
+			} else {
+				val = t.Format("2006-01-02 15:04:05")
+			}
+		} else {
+			val = va.Interface()
+		}
+		vals = append(vals, val)
 	}
 
 	return vals
